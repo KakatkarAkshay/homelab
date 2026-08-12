@@ -36,7 +36,7 @@ spec:
       name: node-red
     persistence:
       enabled: true
-      existingClaim: node-red-data
+      size: 5Gi
     resources:
       requests:
         cpu: 50m

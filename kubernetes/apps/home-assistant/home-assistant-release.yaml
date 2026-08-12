@@ -47,7 +47,7 @@ spec:
       port: 8123
     persistence:
       enabled: true
-      existingClaim: home-assistant-config
+      size: 10Gi
     configuration:
       enabled: true
       forceInit: false

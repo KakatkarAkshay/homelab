@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - serviceaccounts.yaml
-  - storage.yaml
   - repositories.yaml
   - database.yaml
   - iot-network.yaml
