@@ -24,6 +24,7 @@ variable "cluster_nodes" {
     address    = string
     lb_address = string
     lb_mac     = string
+    iot_mac    = string
     memory     = number
     disk       = number
     gpu        = bool
@@ -39,6 +40,7 @@ variable "cluster_nodes" {
       address    = "192.168.20.10/24"
       lb_address = "192.168.30.2/24"
       lb_mac     = "bc:24:11:30:00:10"
+      iot_mac    = "bc:24:11:10:00:10"
       memory     = 12288
       disk       = 1700
       gpu        = true
@@ -52,6 +54,7 @@ variable "cluster_nodes" {
       address    = "192.168.20.11/24"
       lb_address = "192.168.30.3/24"
       lb_mac     = "bc:24:11:30:00:11"
+      iot_mac    = "bc:24:11:10:00:11"
       memory     = 12288
       disk       = 320
       gpu        = true

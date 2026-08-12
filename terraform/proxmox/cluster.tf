@@ -118,6 +118,13 @@ resource "proxmox_virtual_environment_vm" "node" {
     mac_address = each.value.lb_mac
   }
 
+  network_device {
+    bridge      = proxmox_network_linux_bridge.management[each.value.host].name
+    model       = "virtio"
+    vlan_id     = var.proxmox_iot_vlan
+    mac_address = each.value.iot_mac
+  }
+
   dynamic "hostpci" {
     for_each = each.value.gpu && !each.value.legacy_igd ? [1] : []
     content {
@@ -213,6 +220,10 @@ resource "talos_machine_configuration_apply" "node" {
               deviceSelector = { hardwareAddr = lower(each.value.lb_mac) }
               dhcp           = false
               addresses      = [each.value.lb_address]
+            },
+            {
+              deviceSelector = { hardwareAddr = lower(each.value.iot_mac) }
+              dhcp           = false
             },
           ]
         }
