@@ -37,3 +37,13 @@ provider "flux" {
 provider "github" {
   owner = var.github_owner
 }
+
+# Universal Auth locally (INFISICAL_UNIVERSAL_AUTH_CLIENT_ID/SECRET), OIDC in CI
+# (INFISICAL_MACHINE_IDENTITY_ID + INFISICAL_AUTH_JWT). The OIDC method is created by hand in Infisical.
+provider "infisical" {
+  host = var.infisical_host
+  auth = {
+    oidc      = var.infisical_auth_method == "oidc" ? {} : null
+    universal = var.infisical_auth_method == "universal" ? {} : null
+  }
+}
