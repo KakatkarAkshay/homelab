@@ -1,0 +1,23 @@
+# Terraform working directories and local state
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+terraform/infra/build/
+
+# Local variable and override files
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Diagnostics
+crash.log
+crash.*.log
+.terraformrc
+terraform.rc
+
+# Local codex-lb encryption key (managed in Infisical/GitHub secret)
+encryption.key
