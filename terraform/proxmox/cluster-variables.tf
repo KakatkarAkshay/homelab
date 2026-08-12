@@ -116,3 +116,15 @@ variable "proxmox_lb_vlan" {
     error_message = "proxmox_lb_vlan must be between 1 and 4094."
   }
 }
+
+variable "github_owner" {
+  description = "GitHub account that owns the homelab repository."
+  type        = string
+  default     = "KakatkarAkshay"
+}
+
+variable "github_repository" {
+  description = "Name of the homelab GitHub repository."
+  type        = string
+  default     = "homelab"
+}

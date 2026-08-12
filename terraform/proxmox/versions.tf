@@ -21,5 +21,21 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.6"
     }
+    flux = {
+      source  = "fluxcd/flux"
+      version = "~> 1.9"
+    }
+    github = {
+      source  = "integrations/github"
+      version = "~> 6.13"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.3"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 3.0"
+    }
   }
 }
