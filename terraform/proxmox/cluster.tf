@@ -198,6 +198,14 @@ resource "talos_machine_configuration_apply" "node" {
           nodeIP = {
             validSubnets = [local.management_subnet]
           }
+          extraMounts = [
+            {
+              destination = "/var/lib/longhorn"
+              type        = "bind"
+              source      = "/var/lib/longhorn"
+              options     = ["bind", "rshared", "rw"]
+            },
+          ]
         }
         network = {
           interfaces = [

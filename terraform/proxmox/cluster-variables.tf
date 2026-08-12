@@ -40,7 +40,7 @@ variable "cluster_nodes" {
       lb_address = "192.168.30.2/24"
       lb_mac     = "bc:24:11:30:00:10"
       memory     = 12288
-      disk       = 120
+      disk       = 1700
       gpu        = true
       machine    = "q35"
       bios       = "ovmf"
@@ -53,7 +53,7 @@ variable "cluster_nodes" {
       lb_address = "192.168.30.3/24"
       lb_mac     = "bc:24:11:30:00:11"
       memory     = 12288
-      disk       = 100
+      disk       = 320
       gpu        = true
       machine    = "pc"
       bios       = "seabios"
