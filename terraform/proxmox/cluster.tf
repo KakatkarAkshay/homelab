@@ -1,4 +1,5 @@
 locals {
+  cluster_versions  = jsondecode(file("${path.module}/../../cluster-versions.json"))
   control_plane_key = one([for k, n in var.cluster_nodes : k if n.role == "controlplane"])
   control_plane_ip  = split("/", var.cluster_nodes[local.control_plane_key].address)[0]
   cluster_endpoint  = "https://${local.control_plane_ip}:6443"
@@ -6,7 +7,7 @@ locals {
 }
 
 resource "talos_machine_secrets" "this" {
-  talos_version = var.talos_version
+  talos_version = local.cluster_versions.talos
 }
 
 resource "random_pet" "node" {
@@ -20,7 +21,7 @@ resource "talos_image_factory_schematic" "this" {
 }
 
 data "talos_image_factory_urls" "this" {
-  talos_version = var.talos_version
+  talos_version = local.cluster_versions.talos
   schematic_id  = talos_image_factory_schematic.this.id
   platform      = "nocloud"
   architecture  = "amd64"
@@ -33,7 +34,7 @@ resource "proxmox_download_file" "talos" {
   datastore_id = proxmox_storage_directory.local.id
   node_name    = each.value.host
   url          = data.talos_image_factory_urls.this.urls.iso
-  file_name    = "talos-${var.talos_version}-${talos_image_factory_schematic.this.id}-amd64.iso"
+  file_name    = "talos-${local.cluster_versions.talos}-${talos_image_factory_schematic.this.id}-amd64.iso"
   overwrite    = false
 }
 
@@ -169,8 +170,8 @@ data "talos_machine_configuration" "this" {
   machine_type       = each.value.role
   cluster_endpoint   = local.cluster_endpoint
   machine_secrets    = talos_machine_secrets.this.machine_secrets
-  talos_version      = var.talos_version
-  kubernetes_version = var.kubernetes_version
+  talos_version      = local.cluster_versions.talos
+  kubernetes_version = local.cluster_versions.kubernetes
 }
 
 resource "talos_machine_configuration_apply" "node" {

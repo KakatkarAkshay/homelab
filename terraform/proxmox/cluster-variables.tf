@@ -4,18 +4,6 @@ variable "cluster_name" {
   default     = "homelab"
 }
 
-variable "talos_version" {
-  description = "Talos Linux version."
-  type        = string
-  default     = "v1.13.8"
-}
-
-variable "kubernetes_version" {
-  description = "Kubernetes version."
-  type        = string
-  default     = "v1.36.3"
-}
-
 variable "kubernetes_pod_subnets" {
   description = "Pod CIDR ranges."
   type        = list(string)
