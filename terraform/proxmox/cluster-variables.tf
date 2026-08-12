@@ -1,0 +1,101 @@
+variable "cluster_name" {
+  description = "Talos/Kubernetes cluster name."
+  type        = string
+  default     = "homelab"
+}
+
+variable "talos_version" {
+  description = "Talos Linux version."
+  type        = string
+  default     = "v1.13.8"
+}
+
+variable "kubernetes_version" {
+  description = "Kubernetes version."
+  type        = string
+  default     = "v1.36.3"
+}
+
+variable "kubernetes_pod_subnets" {
+  description = "Pod CIDR ranges."
+  type        = list(string)
+  default     = ["10.244.0.0/16"]
+}
+
+variable "kubernetes_service_subnets" {
+  description = "Service CIDR ranges."
+  type        = list(string)
+  default     = ["10.96.0.0/12"]
+}
+
+variable "cluster_nodes" {
+  description = "Talos VMs, keyed by logical id. host is the Proxmox node; gpu passes that host's Intel iGPU through. legacy_igd is required for the Gen7 HD 4000 (needs i440fx/SeaBIOS/vga none)."
+  type = map(object({
+    host       = string
+    role       = string
+    address    = string
+    memory     = number
+    disk       = number
+    gpu        = bool
+    machine    = string
+    bios       = string
+    legacy_igd = bool
+  }))
+
+  default = {
+    cp = {
+      host       = "pve"
+      role       = "controlplane"
+      address    = "192.168.20.10/24"
+      memory     = 12288
+      disk       = 120
+      gpu        = true
+      machine    = "q35"
+      bios       = "ovmf"
+      legacy_igd = false
+    }
+    worker = {
+      host       = "pve-mac"
+      role       = "worker"
+      address    = "192.168.20.11/24"
+      memory     = 12288
+      disk       = 100
+      gpu        = true
+      machine    = "pc"
+      bios       = "seabios"
+      legacy_igd = true
+    }
+  }
+
+  validation {
+    condition     = length([for n in var.cluster_nodes : n if n.role == "controlplane"]) == 1
+    error_message = "Exactly one node must have role controlplane."
+  }
+
+  validation {
+    condition     = alltrue([for n in var.cluster_nodes : contains(["controlplane", "worker"], n.role)])
+    error_message = "role must be controlplane or worker."
+  }
+
+  validation {
+    condition     = alltrue([for n in var.cluster_nodes : can(cidrnetmask(n.address))])
+    error_message = "Every node address must be an IPv4 CIDR."
+  }
+}
+
+variable "management_subnet" {
+  description = "CIDR of the management VLAN, used for Talos kubelet nodeIP selection."
+  type        = string
+  default     = "192.168.20.0/24"
+
+  validation {
+    condition     = can(cidrnetmask(var.management_subnet))
+    error_message = "management_subnet must be an IPv4 CIDR."
+  }
+}
+
+variable "proxmox_ssh_user" {
+  description = "SSH user on the Proxmox hosts, used to apply legacy-igd via qm set."
+  type        = string
+  default     = "root"
+}
