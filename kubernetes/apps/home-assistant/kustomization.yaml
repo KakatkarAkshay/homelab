@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - serviceaccounts.yaml
+  - storage.yaml
+  - repositories.yaml
+  - database.yaml
+  - iot-network.yaml
+  - home-assistant-release.yaml
+  - node-red-release.yaml
+  - matter-server.yaml
+  - mosquitto.yaml
+  - gateway.yaml
+  - route.yaml
