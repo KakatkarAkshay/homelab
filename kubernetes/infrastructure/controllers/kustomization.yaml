@@ -6,5 +6,7 @@ resources:
   - cloudnative-pg
   - multus
   - traefik
+  - metrics-server
+  - reloader
   - metallb
   - longhorn
