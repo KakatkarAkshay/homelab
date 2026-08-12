@@ -5,7 +5,7 @@ resource "proxmox_network_linux_bridge" "management" {
   name       = "vmbr0"
   ports      = ["nic0"]
   vlan_aware = true
-  vids       = join(" ", sort([tostring(var.proxmox_iot_vlan), tostring(var.proxmox_management_vlan)]))
+  vids       = join(" ", sort([tostring(var.proxmox_iot_vlan), tostring(var.proxmox_management_vlan), tostring(var.proxmox_lb_vlan)]))
 }
 
 resource "proxmox_network_linux_vlan" "management" {

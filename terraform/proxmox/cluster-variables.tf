@@ -34,6 +34,8 @@ variable "cluster_nodes" {
     host       = string
     role       = string
     address    = string
+    lb_address = string
+    lb_mac     = string
     memory     = number
     disk       = number
     gpu        = bool
@@ -47,6 +49,8 @@ variable "cluster_nodes" {
       host       = "pve"
       role       = "controlplane"
       address    = "192.168.20.10/24"
+      lb_address = "192.168.30.2/24"
+      lb_mac     = "bc:24:11:30:00:10"
       memory     = 12288
       disk       = 120
       gpu        = true
@@ -58,6 +62,8 @@ variable "cluster_nodes" {
       host       = "pve-mac"
       role       = "worker"
       address    = "192.168.20.11/24"
+      lb_address = "192.168.30.3/24"
+      lb_mac     = "bc:24:11:30:00:11"
       memory     = 12288
       disk       = 100
       gpu        = true
@@ -98,4 +104,15 @@ variable "proxmox_ssh_user" {
   description = "SSH user on the Proxmox hosts, used to apply legacy-igd via qm set."
   type        = string
   default     = "root"
+}
+
+variable "proxmox_lb_vlan" {
+  description = "VLAN carrying MetalLB LoadBalancer VIPs; nodes get a leg here for L2 announcement."
+  type        = number
+  default     = 30
+
+  validation {
+    condition     = var.proxmox_lb_vlan >= 1 && var.proxmox_lb_vlan <= 4094
+    error_message = "proxmox_lb_vlan must be between 1 and 4094."
+  }
 }

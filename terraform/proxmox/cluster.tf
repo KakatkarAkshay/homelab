@@ -110,6 +110,13 @@ resource "proxmox_virtual_environment_vm" "node" {
     vlan_id = var.proxmox_management_vlan
   }
 
+  network_device {
+    bridge      = proxmox_network_linux_bridge.management[each.value.host].name
+    model       = "virtio"
+    vlan_id     = var.proxmox_lb_vlan
+    mac_address = each.value.lb_mac
+  }
+
   dynamic "hostpci" {
     for_each = each.value.gpu && !each.value.legacy_igd ? [1] : []
     content {
@@ -190,6 +197,15 @@ resource "talos_machine_configuration_apply" "node" {
           nodeIP = {
             validSubnets = [local.management_subnet]
           }
+        }
+        network = {
+          interfaces = [
+            {
+              deviceSelector = { hardwareAddr = lower(each.value.lb_mac) }
+              dhcp           = false
+              addresses      = [each.value.lb_address]
+            },
+          ]
         }
         nodeLabels = each.value.gpu ? {
           "intel.feature.node.kubernetes.io/gpu" = "true"
