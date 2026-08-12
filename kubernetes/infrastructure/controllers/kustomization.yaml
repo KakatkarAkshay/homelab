@@ -4,5 +4,6 @@ resources:
   - external-secrets
   - cert-manager
   - cloudnative-pg
+  - multus
   - metallb
   - longhorn
