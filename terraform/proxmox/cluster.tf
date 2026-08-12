@@ -202,6 +202,9 @@ resource "talos_machine_configuration_apply" "node" {
           modules = each.value.gpu ? [{ name = "i915" }] : []
         }
         kubelet = {
+          extraArgs = {
+            rotate-server-certificates = "true"
+          }
           nodeIP = {
             validSubnets = [local.management_subnet]
           }
