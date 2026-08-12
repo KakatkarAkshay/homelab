@@ -21,3 +21,6 @@ terraform.rc
 
 # Local codex-lb encryption key (managed in Infisical/GitHub secret)
 encryption.key
+
+# Local environment files
+.env
