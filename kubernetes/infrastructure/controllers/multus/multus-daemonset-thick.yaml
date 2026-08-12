@@ -201,6 +201,22 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
       initContainers:
+        - name: install-cni-plugins
+          image: rancher/hardened-cni-plugins:v1.9.1-build20260807@sha256:50246381627c2a9935f95815ab9c39db2c033dd47ed1ac620c76f2c0fcd222f5
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              for plugin in macvlan static host-local; do
+                cp -f "/opt/cni/bin/${plugin}" /host/opt/cni/bin/
+              done
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: cnibin
+              mountPath: /host/opt/cni/bin
+              mountPropagation: Bidirectional
         - name: install-multus-binary
           image: ghcr.io/k8snetworkplumbingwg/multus-cni:v4.3.0-thick@sha256:2b9671447f3ea4e7e56730843dbf59445b9307246f393b61386b896d56ae51c9
           command:
