@@ -1,0 +1,60 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: newt
+  namespace: flux-system
+spec:
+  interval: 30m
+  releaseName: newt
+  targetNamespace: newt
+  dependsOn:
+    - name: traefik
+  chart:
+    spec:
+      chart: newt
+      version: 1.5.0
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: fossorial
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    newtInstances:
+      - name: homelab
+        enabled: true
+        replicas: 1
+        auth:
+          existingSecretName: newt-credentials
+        configPersistence:
+          enabled: true
+          type: emptyDir
+        blueprintFile: /etc/newt/blueprint.yaml
+        blueprintData: |
+          public-resources:
+            home-assistant:
+              name: Home Assistant
+              full-domain: home-assistant.kakatkarakshay.dev
+              ssl: true
+              tls-server-name: home-assistant.kakatkarakshay.dev
+              targets:
+                - method: https
+                  hostname: traefik.traefik.svc.cluster.local
+                  port: 443
+            node-red:
+              name: Node-RED
+              full-domain: node-red.kakatkarakshay.dev
+              ssl: true
+              tls-server-name: node-red.kakatkarakshay.dev
+              targets:
+                - method: https
+                  hostname: traefik.traefik.svc.cluster.local
+                  port: 443
+        resources:
+          requests:
+            cpu: 25m
+            memory: 64Mi
