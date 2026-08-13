@@ -38,6 +38,7 @@ spec:
           public-resources:
             home-assistant:
               name: Home Assistant
+              protocol: http
               full-domain: home-assistant.kakatkarakshay.dev
               ssl: true
               tls-server-name: home-assistant.kakatkarakshay.dev
@@ -47,6 +48,7 @@ spec:
                   port: 443
             node-red:
               name: Node-RED
+              protocol: http
               full-domain: node-red.kakatkarakshay.dev
               ssl: true
               tls-server-name: node-red.kakatkarakshay.dev
