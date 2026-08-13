@@ -75,3 +75,11 @@ resource "infisical_secret" "newt_secret" {
   name         = "NEWT_SECRET"
   value        = var.newt_secret
 }
+
+resource "infisical_secret" "cloudflare_api_token" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = "/platform/cloudflare"
+  name         = "API_TOKEN"
+  value        = data.terraform_remote_state.cloudlab.outputs.cloudflare_api_token
+}
