@@ -83,3 +83,35 @@ resource "infisical_secret" "cloudflare_api_token" {
   name         = "API_TOKEN"
   value        = data.terraform_remote_state.cloudlab.outputs.cloudflare_api_token
 }
+
+resource "infisical_secret" "idrive_access_key_id" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = "/platform/idrive-credentials"
+  name         = "ACCESS_KEY_ID"
+  value        = data.terraform_remote_state.cloudlab.outputs.idrive_access_key_id
+}
+
+resource "infisical_secret" "idrive_secret_access_key" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = "/platform/idrive-credentials"
+  name         = "ACCESS_SECRET_KEY"
+  value        = data.terraform_remote_state.cloudlab.outputs.idrive_secret_access_key
+}
+
+resource "infisical_secret" "idrive_e2_endpoint" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = "/platform/idrive-credentials"
+  name         = "E2_ENDPOINT"
+  value        = data.terraform_remote_state.cloudlab.outputs.idrive_e2_endpoint
+}
+
+resource "infisical_secret" "idrive_aws_region" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = "/platform/idrive-credentials"
+  name         = "AWS_REGION"
+  value        = data.terraform_remote_state.cloudlab.outputs.idrive_aws_region
+}
