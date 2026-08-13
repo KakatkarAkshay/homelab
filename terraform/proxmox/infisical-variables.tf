@@ -43,3 +43,9 @@ variable "newt_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "authentik_outpost_token" {
+  description = "Token issued by authentik for the homelab proxy outpost."
+  type        = string
+  sensitive   = true
+}

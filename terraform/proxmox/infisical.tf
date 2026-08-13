@@ -123,3 +123,19 @@ resource "infisical_secret" "volsync_restic_password" {
   name         = "RESTIC_PASSWORD"
   value        = data.terraform_remote_state.cloudlab.outputs.volsync_restic_password
 }
+
+resource "infisical_secret_folder" "authentik" {
+  project_id       = infisical_project.homelab.id
+  environment_slug = var.infisical_environment_slug
+  folder_path      = "/platform"
+  name             = "authentik"
+  description      = "Token the local outpost uses to reach authentik."
+}
+
+resource "infisical_secret" "authentik_outpost_token" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = infisical_secret_folder.authentik.path
+  name         = "OUTPOST_TOKEN"
+  value        = var.authentik_outpost_token
+}

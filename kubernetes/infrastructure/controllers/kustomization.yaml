@@ -6,6 +6,7 @@ resources:
   - cloudnative-pg
   - traefik
   - external-dns
+  - authentik-outpost
   - metrics-server
   - reloader
   - volsync
