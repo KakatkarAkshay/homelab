@@ -25,3 +25,21 @@ variable "infisical_environment_slug" {
   type        = string
   default     = "prod"
 }
+
+variable "newt_pangolin_endpoint" {
+  description = "Public URL of the Pangolin server the Newt site connects to."
+  type        = string
+  default     = "https://pangolin.kakatkarakshay.dev"
+}
+
+variable "newt_id" {
+  description = "Newt site ID issued by Pangolin."
+  type        = string
+  sensitive   = true
+}
+
+variable "newt_secret" {
+  description = "Newt site secret issued by Pangolin."
+  type        = string
+  sensitive   = true
+}

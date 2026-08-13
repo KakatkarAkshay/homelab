@@ -43,3 +43,42 @@ resource "kubernetes_secret_v1" "infisical_eso" {
     clientSecret = infisical_identity_universal_auth_client_secret.external_secrets.client_secret
   }
 }
+
+resource "infisical_secret_folder" "platform" {
+  project_id       = infisical_project.homelab.id
+  environment_slug = var.infisical_environment_slug
+  folder_path      = "/"
+  name             = "platform"
+}
+
+resource "infisical_secret_folder" "newt" {
+  project_id       = infisical_project.homelab.id
+  environment_slug = var.infisical_environment_slug
+  folder_path      = infisical_secret_folder.platform.path
+  name             = "newt"
+  description      = "Newt site credentials issued by Pangolin."
+}
+
+resource "infisical_secret" "newt_pangolin_endpoint" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = infisical_secret_folder.newt.path
+  name         = "PANGOLIN_ENDPOINT"
+  value        = var.newt_pangolin_endpoint
+}
+
+resource "infisical_secret" "newt_id" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = infisical_secret_folder.newt.path
+  name         = "NEWT_ID"
+  value        = var.newt_id
+}
+
+resource "infisical_secret" "newt_secret" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = infisical_secret_folder.newt.path
+  name         = "NEWT_SECRET"
+  value        = var.newt_secret
+}
