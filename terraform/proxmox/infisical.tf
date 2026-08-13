@@ -44,17 +44,10 @@ resource "kubernetes_secret_v1" "infisical_eso" {
   }
 }
 
-resource "infisical_secret_folder" "platform" {
-  project_id       = infisical_project.homelab.id
-  environment_slug = var.infisical_environment_slug
-  folder_path      = "/"
-  name             = "platform"
-}
-
 resource "infisical_secret_folder" "newt" {
   project_id       = infisical_project.homelab.id
   environment_slug = var.infisical_environment_slug
-  folder_path      = infisical_secret_folder.platform.path
+  folder_path      = "/platform"
   name             = "newt"
   description      = "Newt site credentials issued by Pangolin."
 }
