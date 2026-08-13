@@ -115,3 +115,11 @@ resource "infisical_secret" "idrive_aws_region" {
   name         = "AWS_REGION"
   value        = data.terraform_remote_state.cloudlab.outputs.idrive_aws_region
 }
+
+resource "infisical_secret" "volsync_restic_password" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = "/platform/volsync"
+  name         = "RESTIC_PASSWORD"
+  value        = data.terraform_remote_state.cloudlab.outputs.volsync_restic_password
+}
