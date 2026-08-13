@@ -8,5 +8,6 @@ resources:
   - traefik
   - metrics-server
   - reloader
+  - volsync
   - metallb
   - longhorn
