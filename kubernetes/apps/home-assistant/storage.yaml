@@ -3,6 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: home-assistant-pvc
   namespace: home-assistant
+  annotations:
+    helm.sh/resource-policy: keep
 spec:
   accessModes:
     - ReadWriteOnce
@@ -20,6 +22,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: node-red
   namespace: home-assistant
+  annotations:
+    helm.sh/resource-policy: keep
 spec:
   accessModes:
     - ReadWriteOnce
