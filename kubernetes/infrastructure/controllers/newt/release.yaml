@@ -36,25 +36,12 @@ spec:
         blueprintFile: /etc/newt/blueprint.yaml
         blueprintData: |
           public-resources:
-            home-assistant:
-              name: Home Assistant
-              protocol: http
-              full-domain: home-assistant.kakatkarakshay.dev
-              ssl: true
-              tls-server-name: home-assistant.kakatkarakshay.dev
+            homelab:
+              name: Homelab
+              protocol: tcp
+              proxy-port: 9443
               targets:
-                - method: https
-                  hostname: traefik.traefik.svc.cluster.local
-                  port: 443
-            node-red:
-              name: Node-RED
-              protocol: http
-              full-domain: node-red.kakatkarakshay.dev
-              ssl: true
-              tls-server-name: node-red.kakatkarakshay.dev
-              targets:
-                - method: https
-                  hostname: traefik.traefik.svc.cluster.local
+                - hostname: traefik.traefik.svc.cluster.local
                   port: 443
         resources:
           requests:
