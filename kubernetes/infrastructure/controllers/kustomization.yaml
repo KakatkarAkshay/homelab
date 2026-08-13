@@ -5,6 +5,7 @@ resources:
   - cert-manager
   - cloudnative-pg
   - traefik
+  - external-dns
   - metrics-server
   - reloader
   - volsync

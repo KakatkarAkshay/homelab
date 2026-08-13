@@ -35,8 +35,16 @@ spec:
         enabled: true
       kubernetesIngress:
         enabled: true
+        publishedService:
+          enabled: false
+        ingressEndpoint:
+          hostname: homelab-gateway.kakatkarakshay.dev
       kubernetesGateway:
         enabled: true
+        statusAddress:
+          hostname: homelab-gateway.kakatkarakshay.dev
+          service:
+            enabled: false
     gateway:
       enabled: false
     gatewayClass:
