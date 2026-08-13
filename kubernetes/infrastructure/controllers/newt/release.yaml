@@ -39,7 +39,7 @@ spec:
             homelab:
               name: Homelab
               protocol: tcp
-              proxy-port: 9443
+              proxy-port: 443
               targets:
                 - hostname: traefik.traefik.svc.cluster.local
                   port: 443

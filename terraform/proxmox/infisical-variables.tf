@@ -27,9 +27,9 @@ variable "infisical_environment_slug" {
 }
 
 variable "newt_pangolin_endpoint" {
-  description = "Public URL of the Pangolin server the Newt site connects to."
+  description = "Pangolin Cloud control plane the Newt site connects to."
   type        = string
-  default     = "https://pangolin.kakatkarakshay.dev"
+  default     = "https://app.pangolin.net"
 }
 
 variable "newt_id" {
