@@ -4,7 +4,6 @@ resources:
   - external-secrets
   - cert-manager
   - cloudnative-pg
-  - multus
   - traefik
   - metrics-server
   - reloader

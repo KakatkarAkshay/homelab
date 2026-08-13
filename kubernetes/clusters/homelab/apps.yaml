@@ -6,6 +6,7 @@ metadata:
 spec:
   dependsOn:
     - name: infrastructure-configs
+    - name: multus
   interval: 10m
   retryInterval: 1m
   path: ./kubernetes/apps

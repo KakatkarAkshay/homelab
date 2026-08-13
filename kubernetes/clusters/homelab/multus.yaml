@@ -1,0 +1,90 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: multus
+  namespace: flux-system
+spec:
+  interval: 24h
+  ref:
+    branch: master
+    commit: c5c0be99cf10324ac0368baad5e77877fba02290
+  url: https://github.com/k8snetworkplumbingwg/multus-cni.git
+  ignore: |
+    /*
+    !/deployments
+    /deployments/*
+    !/deployments/multus-daemonset-thick.yml
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: multus
+  namespace: flux-system
+spec:
+  interval: 24h
+  retryInterval: 1m
+  path: ./deployments
+  prune: true
+  wait: true
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: multus
+  patches:
+    # Upstream's 50Mi limit OOMKills the thick daemon when every pod on a node
+    # re-runs CNI at once after a reboot, which stalls node recovery.
+    - target:
+        kind: DaemonSet
+        name: kube-multus-ds
+      patch: |
+        apiVersion: apps/v1
+        kind: DaemonSet
+        metadata:
+          name: kube-multus-ds
+          namespace: kube-system
+        spec:
+          template:
+            spec:
+              containers:
+                - name: kube-multus
+                  image: ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot-thick@sha256:17ce034d146b6d64e01dda99e0342d6dfc9ef470cb0ab47109f3be85d95080f8
+                  resources:
+                    requests:
+                      cpu: "100m"
+                      memory: "128Mi"
+                    limits:
+                      cpu: "100m"
+                      memory: "512Mi"
+              initContainers:
+                - name: install-multus-binary
+                  image: ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot-thick@sha256:17ce034d146b6d64e01dda99e0342d6dfc9ef470cb0ab47109f3be85d95080f8
+    # Talos ships only flannel's plugins, so Multus cannot find macvlan.
+    - target:
+        kind: DaemonSet
+        name: kube-multus-ds
+      patch: |
+        apiVersion: apps/v1
+        kind: DaemonSet
+        metadata:
+          name: kube-multus-ds
+          namespace: kube-system
+        spec:
+          template:
+            spec:
+              initContainers:
+                - name: install-cni-plugins
+                  image: rancher/hardened-cni-plugins:v1.9.1-build20260807@sha256:50246381627c2a9935f95815ab9c39db2c033dd47ed1ac620c76f2c0fcd222f5
+                  command:
+                    - sh
+                    - -c
+                    - |
+                      set -eu
+                      for plugin in macvlan static host-local; do
+                        cp -f "/opt/cni/bin/${plugin}" /host/opt/cni/bin/
+                      done
+                  securityContext:
+                    privileged: true
+                  volumeMounts:
+                    - name: cnibin
+                      mountPath: /host/opt/cni/bin
+                      mountPropagation: Bidirectional
