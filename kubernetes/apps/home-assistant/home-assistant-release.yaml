@@ -47,7 +47,7 @@ spec:
       port: 8123
     persistence:
       enabled: true
-      size: 10Gi
+      existingClaim: home-assistant-pvc
     configuration:
       enabled: true
       forceInit: false
