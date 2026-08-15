@@ -259,6 +259,16 @@ resource "talos_machine_configuration_apply" "node" {
         } : {},
       )
     }),
+    yamlencode({
+      apiVersion = "v1alpha1"
+      kind       = "ExtensionServiceConfig"
+      name       = "tailscale"
+      environment = [
+        "TS_AUTHKEY=${var.tailscale_client_secret}?preauthorized=true&ephemeral=false",
+        "TS_EXTRA_ARGS=--advertise-tags=tag:k8s-homelab",
+        "TS_ACCEPT_DNS=false",
+      ]
+    }),
   ]
 
   timeouts = {

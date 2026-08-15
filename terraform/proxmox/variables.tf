@@ -125,3 +125,9 @@ variable "proxmox_igpus" {
     error_message = "Every subsystem_id must be lowercase vendor:device hex, e.g. 1043:88e8."
   }
 }
+
+variable "tailscale_client_secret" {
+  description = "Tailscale OAuth client secret used as the node auth key; tags come from --advertise-tags."
+  type        = string
+  sensitive   = true
+}
