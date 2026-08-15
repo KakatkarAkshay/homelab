@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: homelab-infrastructure
   cancel-in-progress: false
 
 permissions:
