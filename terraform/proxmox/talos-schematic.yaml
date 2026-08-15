@@ -6,4 +6,5 @@ customization:
       - siderolabs/iscsi-tools
       - siderolabs/nfs-utils
       - siderolabs/qemu-guest-agent
+      - siderolabs/tailscale
       - siderolabs/util-linux-tools
