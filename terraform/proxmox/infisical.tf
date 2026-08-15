@@ -190,3 +190,19 @@ resource "infisical_secret" "loki_ca_key" {
   name         = "CA_KEY"
   value        = data.terraform_remote_state.cloudlab.outputs.loki_ca_key
 }
+
+resource "infisical_secret" "loki_client_cert" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = infisical_secret_folder.loki.path
+  name         = "CLIENT_CERT"
+  value        = tls_locally_signed_cert.loki_client.cert_pem
+}
+
+resource "infisical_secret" "loki_client_key" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = infisical_secret_folder.loki.path
+  name         = "CLIENT_KEY"
+  value        = tls_private_key.loki_client.private_key_pem
+}

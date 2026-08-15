@@ -1,0 +1,59 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: flux-system
+spec:
+  interval: 30m
+  timeout: 10m
+  releaseName: kube-prometheus-stack
+  targetNamespace: observability
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      version: 88.3.0
+      interval: 24h
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  values:
+    grafana:
+      enabled: false
+    alertmanager:
+      enabled: false
+    prometheus:
+      agentMode: true
+      prometheusSpec:
+        externalLabels:
+          cluster: homelab
+        serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelectorNilUsesHelmValues: false
+        probeSelectorNilUsesHelmValues: false
+        scrapeConfigSelectorNilUsesHelmValues: false
+        remoteWrite:
+          - url: https://thanos.kakatkarakshay.dev/api/v1/receive
+            tlsConfig:
+              cert:
+                secret:
+                  name: prometheus-thanos-client
+                  key: tls.crt
+              keySecret:
+                name: prometheus-thanos-client
+                key: tls.key
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            memory: 1Gi
+    kubeEtcd:
+      endpoints:
+        - 192.168.20.10

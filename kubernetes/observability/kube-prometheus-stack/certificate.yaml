@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: prometheus-thanos-client
+  namespace: observability
+spec:
+  secretName: prometheus-thanos-client
+  commonName: homelab-prometheus
+  duration: 2160h
+  renewBefore: 720h
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    kind: ClusterIssuer
+    name: thanos-ca
+  usages:
+    - client auth
