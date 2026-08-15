@@ -4,5 +4,6 @@ resources:
   - external-secrets
   - cert-manager
   - authentik-rbac.yaml
+  - headlamp-access.yaml
   - longhorn
   - metallb

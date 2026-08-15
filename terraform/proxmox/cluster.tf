@@ -205,9 +205,6 @@ resource "talos_machine_configuration_apply" "node" {
           extraArgs = {
             rotate-server-certificates = "true"
           }
-          # longhorn-critical is 1e9, below kubelet's 2e9 "critical" threshold, so the
-          # CSI plugin would otherwise be torn down alongside the workloads whose
-          # volumes it has to unmount. Ordered buckets keep it alive until they finish.
           extraConfig = {
             shutdownGracePeriod             = "0s"
             shutdownGracePeriodCriticalPods = "0s"
