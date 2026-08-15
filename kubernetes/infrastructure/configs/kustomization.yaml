@@ -3,5 +3,6 @@ kind: Kustomization
 resources:
   - external-secrets
   - cert-manager
+  - authentik-rbac.yaml
   - longhorn
   - metallb

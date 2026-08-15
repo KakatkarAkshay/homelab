@@ -243,6 +243,16 @@ resource "talos_machine_configuration_apply" "node" {
             podSubnets     = var.kubernetes_pod_subnets
             serviceSubnets = var.kubernetes_service_subnets
           }
+          apiServer = {
+            extraArgs = {
+              oidc-client-id       = "kubernetes"
+              oidc-groups-claim    = "groups"
+              oidc-groups-prefix   = "authentik:"
+              oidc-issuer-url      = "https://auth.kakatkarakshay.dev/application/o/kubernetes/"
+              oidc-username-claim  = "preferred_username"
+              oidc-username-prefix = "authentik:"
+            }
+          }
         },
         each.value.role == "controlplane" ? {
           allowSchedulingOnControlPlanes = true
