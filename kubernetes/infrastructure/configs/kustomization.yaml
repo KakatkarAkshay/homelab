@@ -5,5 +5,6 @@ resources:
   - cert-manager
   - authentik-rbac.yaml
   - headlamp-access.yaml
+  - traefik-certificates.yaml
   - longhorn
   - metallb

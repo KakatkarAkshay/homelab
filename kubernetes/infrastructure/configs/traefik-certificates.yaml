@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: homelab-kakatkarakshay-dev
+  namespace: traefik
+spec:
+  secretName: homelab-kakatkarakshay-dev-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-production
+  dnsNames:
+    - homelab.kakatkarakshay.dev

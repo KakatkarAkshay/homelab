@@ -33,6 +33,7 @@ spec:
     providers:
       kubernetesCRD:
         enabled: true
+        allowCrossNamespace: true
       kubernetesIngress:
         enabled: true
         publishedService:
@@ -79,3 +80,71 @@ spec:
       requests:
         cpu: 25m
         memory: 64Mi
+    extraObjects:
+      - apiVersion: traefik.io/v1alpha1
+        kind: Middleware
+        metadata:
+          name: authentik-forward-auth
+          namespace: traefik
+        spec:
+          forwardAuth:
+            address: http://authentik-outpost.authentik.svc.cluster.local:9000/outpost.goauthentik.io/auth/traefik
+            trustForwardHeader: true
+            authResponseHeaders:
+              - X-authentik-username
+              - X-authentik-groups
+              - X-authentik-entitlements
+              - X-authentik-email
+              - X-authentik-name
+              - X-authentik-uid
+              - X-authentik-jwt
+              - X-authentik-meta-jwks
+              - X-authentik-meta-outpost
+              - X-authentik-meta-provider
+              - X-authentik-meta-app
+              - X-authentik-meta-version
+      - apiVersion: traefik.io/v1alpha1
+        kind: Middleware
+        metadata:
+          name: dashboard-redirect
+          namespace: traefik
+        spec:
+          redirectRegex:
+            regex: ^https?://homelab\.kakatkarakshay\.dev/?$
+            replacement: https://homelab.kakatkarakshay.dev/dashboard/
+            permanent: true
+      - apiVersion: traefik.io/v1alpha1
+        kind: IngressRoute
+        metadata:
+          name: traefik-dashboard
+          namespace: traefik
+          annotations:
+            external-dns.alpha.kubernetes.io/target: homelab-gateway.kakatkarakshay.dev
+        spec:
+          entryPoints:
+            - websecure
+          tls:
+            secretName: homelab-kakatkarakshay-dev-tls
+          routes:
+            - kind: Rule
+              match: Host(`homelab.kakatkarakshay.dev`) && Path(`/`)
+              middlewares:
+                - name: dashboard-redirect
+              services:
+                - kind: TraefikService
+                  name: api@internal
+            - kind: Rule
+              match: Host(`homelab.kakatkarakshay.dev`) && PathPrefix(`/outpost.goauthentik.io/`)
+              priority: 100
+              services:
+                - kind: Service
+                  name: authentik-outpost
+                  namespace: authentik
+                  port: 9000
+            - kind: Rule
+              match: Host(`homelab.kakatkarakshay.dev`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+              middlewares:
+                - name: authentik-forward-auth
+              services:
+                - kind: TraefikService
+                  name: api@internal
