@@ -139,3 +139,54 @@ resource "infisical_secret" "authentik_outpost_token" {
   name         = "OUTPOST_TOKEN"
   value        = var.authentik_outpost_token
 }
+
+
+
+
+resource "infisical_secret_folder" "thanos" {
+  project_id       = infisical_project.homelab.id
+  environment_slug = var.infisical_environment_slug
+  folder_path      = "/platform"
+  name             = "thanos"
+  description      = "CA issued by cloudlab for authenticating writes to Thanos."
+}
+
+resource "infisical_secret" "thanos_ca_cert" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = infisical_secret_folder.thanos.path
+  name         = "CA_CERT"
+  value        = data.terraform_remote_state.cloudlab.outputs.thanos_ca_cert
+}
+
+resource "infisical_secret" "thanos_ca_key" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = infisical_secret_folder.thanos.path
+  name         = "CA_KEY"
+  value        = data.terraform_remote_state.cloudlab.outputs.thanos_ca_key
+}
+
+resource "infisical_secret_folder" "loki" {
+  project_id       = infisical_project.homelab.id
+  environment_slug = var.infisical_environment_slug
+  folder_path      = "/platform"
+  name             = "loki"
+  description      = "CA issued by cloudlab for authenticating writes to Loki."
+}
+
+resource "infisical_secret" "loki_ca_cert" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = infisical_secret_folder.loki.path
+  name         = "CA_CERT"
+  value        = data.terraform_remote_state.cloudlab.outputs.loki_ca_cert
+}
+
+resource "infisical_secret" "loki_ca_key" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = infisical_secret_folder.loki.path
+  name         = "CA_KEY"
+  value        = data.terraform_remote_state.cloudlab.outputs.loki_ca_key
+}

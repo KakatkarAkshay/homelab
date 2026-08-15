@@ -1,0 +1,71 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: thanos-ca
+  namespace: cert-manager
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: infisical
+  target:
+    name: thanos-ca
+    creationPolicy: Owner
+    deletionPolicy: Retain
+    template:
+      type: kubernetes.io/tls
+      engineVersion: v2
+      data:
+        tls.crt: "{{ .cert }}"
+        tls.key: "{{ .key }}"
+  data:
+    - secretKey: cert
+      remoteRef:
+        key: /platform/thanos/CA_CERT
+    - secretKey: key
+      remoteRef:
+        key: /platform/thanos/CA_KEY
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: thanos-ca
+spec:
+  ca:
+    secretName: thanos-ca
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: loki-ca
+  namespace: cert-manager
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: infisical
+  target:
+    name: loki-ca
+    creationPolicy: Owner
+    deletionPolicy: Retain
+    template:
+      type: kubernetes.io/tls
+      engineVersion: v2
+      data:
+        tls.crt: "{{ .cert }}"
+        tls.key: "{{ .key }}"
+  data:
+    - secretKey: cert
+      remoteRef:
+        key: /platform/loki/CA_CERT
+    - secretKey: key
+      remoteRef:
+        key: /platform/loki/CA_KEY
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: loki-ca
+spec:
+  ca:
+    secretName: loki-ca
