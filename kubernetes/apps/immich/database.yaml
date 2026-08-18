@@ -74,9 +74,6 @@ spec:
     initdb:
       database: immich
       owner: immich
-      postInitSQL:
-        - CREATE EXTENSION IF NOT EXISTS vchord CASCADE
-        - CREATE EXTENSION IF NOT EXISTS earthdistance CASCADE
   postgresql:
     shared_preload_libraries:
       - vchord.so
@@ -96,6 +93,27 @@ spec:
       parameters:
         barmanObjectName: immich-idrive-e2
         serverName: immich-postgresql
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: immich
+  namespace: immich
+spec:
+  name: immich
+  owner: immich
+  cluster:
+    name: immich-postgresql
+  databaseReclaimPolicy: retain
+  extensions:
+    - name: vector
+      ensure: present
+    - name: vchord
+      ensure: present
+    - name: cube
+      ensure: present
+    - name: earthdistance
+      ensure: present
 ---
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
