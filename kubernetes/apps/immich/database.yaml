@@ -1,0 +1,115 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: idrive-e2-credentials
+  namespace: immich
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: infisical
+  target:
+    name: idrive-e2-credentials
+    creationPolicy: Owner
+    deletionPolicy: Retain
+  data:
+    - secretKey: ACCESS_KEY_ID
+      remoteRef:
+        key: /platform/idrive-credentials/ACCESS_KEY_ID
+    - secretKey: ACCESS_SECRET_KEY
+      remoteRef:
+        key: /platform/idrive-credentials/ACCESS_SECRET_KEY
+    - secretKey: AWS_REGION
+      remoteRef:
+        key: /platform/idrive-credentials/AWS_REGION
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: immich-idrive-e2
+  namespace: immich
+spec:
+  configuration:
+    destinationPath: s3://cloudnativepg-backup/immich/
+    endpointURL: https://s3.eu-central-2.idrivee2.com
+    s3Credentials:
+      accessKeyId:
+        name: idrive-e2-credentials
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: idrive-e2-credentials
+        key: ACCESS_SECRET_KEY
+      region:
+        name: idrive-e2-credentials
+        key: AWS_REGION
+    data:
+      compression: gzip
+    wal:
+      compression: gzip
+      maxParallel: 2
+  retentionPolicy: 30d
+  instanceSidecarConfiguration:
+    retentionPolicyIntervalSeconds: 3600
+    env:
+      - name: AWS_REQUEST_CHECKSUM_CALCULATION
+        value: when_required
+      - name: AWS_RESPONSE_CHECKSUM_VALIDATION
+        value: when_required
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: immich-postgresql
+  namespace: immich
+  annotations:
+    cnpg.io/skipEmptyWalArchiveCheck: enabled
+spec:
+  instances: 1
+  imageName: ghcr.io/tensorchord/cloudnative-vectorchord:18.4-1.1.1@sha256:9c9246cb8ba0332f7e1115def71329410657237db8ef104160a479a89c7e03a2
+  bootstrap:
+    initdb:
+      database: immich
+      owner: immich
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS vchord CASCADE
+        - CREATE EXTENSION IF NOT EXISTS earthdistance CASCADE
+  postgresql:
+    shared_preload_libraries:
+      - vchord.so
+  storage:
+    size: 10Gi
+    storageClass: longhorn
+  walStorage:
+    size: 2Gi
+    storageClass: longhorn
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: immich-idrive-e2
+        serverName: immich-postgresql
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: immich-postgresql
+  namespace: immich
+spec:
+  schedule: "0 30 2 * * *"
+  backupOwnerReference: self
+  immediate: true
+  cluster:
+    name: immich-postgresql
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+    parameters:
+      barmanObjectName: immich-idrive-e2

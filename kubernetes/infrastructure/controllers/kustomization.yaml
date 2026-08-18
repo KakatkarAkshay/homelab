@@ -4,6 +4,7 @@ resources:
   - external-secrets
   - cert-manager
   - cloudnative-pg
+  - dragonfly-operator
   - traefik
   - external-dns
   - authentik-outpost

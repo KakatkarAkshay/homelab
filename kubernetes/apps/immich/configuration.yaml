@@ -1,0 +1,38 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: immich-configuration
+  namespace: immich
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: infisical
+  target:
+    name: immich-configuration
+    creationPolicy: Owner
+    deletionPolicy: Retain
+    template:
+      engineVersion: v2
+      data:
+        immich-config.yaml: |
+          oauth:
+            enabled: true
+            clientId: "{{ .clientId }}"
+            clientSecret: "{{ .clientSecret }}"
+            issuerUrl: https://auth.kakatkarakshay.dev/application/o/immich/
+            buttonText: Sign in with Authentik
+            autoRegister: true
+            scope: openid email profile immich
+            roleClaim: immich_role
+          passwordLogin:
+            enabled: false
+          server:
+            externalDomain: https://immich.kakatkarakshay.dev
+  data:
+    - secretKey: clientId
+      remoteRef:
+        key: /platform/immich/OAUTH_CLIENT_ID
+    - secretKey: clientSecret
+      remoteRef:
+        key: /platform/immich/OAUTH_CLIENT_SECRET

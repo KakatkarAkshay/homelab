@@ -124,6 +124,30 @@ resource "infisical_secret" "volsync_restic_password" {
   value        = data.terraform_remote_state.cloudlab.outputs.volsync_restic_password
 }
 
+resource "infisical_secret_folder" "immich" {
+  project_id       = infisical_project.homelab.id
+  environment_slug = var.infisical_environment_slug
+  folder_path      = "/platform"
+  name             = "immich"
+  description      = "Immich application secrets issued by cloudlab."
+}
+
+resource "infisical_secret" "immich_oauth_client_id" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = infisical_secret_folder.immich.path
+  name         = "OAUTH_CLIENT_ID"
+  value        = data.terraform_remote_state.cloudlab.outputs.immich_oauth_client_id
+}
+
+resource "infisical_secret" "immich_oauth_client_secret" {
+  workspace_id = infisical_project.homelab.id
+  env_slug     = var.infisical_environment_slug
+  folder_path  = infisical_secret_folder.immich.path
+  name         = "OAUTH_CLIENT_SECRET"
+  value        = data.terraform_remote_state.cloudlab.outputs.immich_oauth_client_secret
+}
+
 resource "infisical_secret_folder" "authentik" {
   project_id       = infisical_project.homelab.id
   environment_slug = var.infisical_environment_slug

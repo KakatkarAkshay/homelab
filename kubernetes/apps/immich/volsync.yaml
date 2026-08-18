@@ -1,0 +1,59 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: volsync-immich
+  namespace: immich
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: infisical
+  target:
+    name: volsync-immich
+    creationPolicy: Owner
+    deletionPolicy: Retain
+    template:
+      engineVersion: v2
+      data:
+        RESTIC_REPOSITORY: "s3:https://{{ .endpoint }}/volsync/immich/library"
+        RESTIC_PASSWORD: "{{ .resticPassword }}"
+        AWS_ACCESS_KEY_ID: "{{ .accessKeyID }}"
+        AWS_SECRET_ACCESS_KEY: "{{ .secretAccessKey }}"
+  data:
+    - secretKey: accessKeyID
+      remoteRef:
+        key: /platform/idrive-credentials/ACCESS_KEY_ID
+    - secretKey: secretAccessKey
+      remoteRef:
+        key: /platform/idrive-credentials/ACCESS_SECRET_KEY
+    - secretKey: endpoint
+      remoteRef:
+        key: /platform/idrive-credentials/E2_ENDPOINT
+    - secretKey: resticPassword
+      remoteRef:
+        key: /platform/volsync/RESTIC_PASSWORD
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: immich-library
+  namespace: immich
+spec:
+  sourcePVC: immich-library
+  trigger:
+    schedule: "0 */6 * * *"
+  restic:
+    repository: volsync-immich
+    copyMethod: Snapshot
+    volumeSnapshotClassName: longhorn-snap
+    storageClassName: longhorn
+    cacheCapacity: 5Gi
+    cacheStorageClassName: longhorn
+    moverSecurityContext:
+      runAsUser: 0
+      runAsGroup: 0
+      fsGroup: 0
+    pruneIntervalDays: 14
+    retain:
+      daily: 7
+      weekly: 4
