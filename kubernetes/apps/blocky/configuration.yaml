@@ -26,7 +26,14 @@ data:
       customTTL: 1h
       filterUnmappedTypes: true
       mapping:
+        blocky-homelab.kakatkarakshay.dev: 192.168.30.10
         dns.kakatkarakshay.dev: 192.168.30.10
+        home-assistant.kakatkarakshay.dev: 192.168.30.10
+        homelab.kakatkarakshay.dev: 192.168.30.10
+        homelab-gateway.kakatkarakshay.dev: 192.168.30.10
+        immich.kakatkarakshay.dev: 192.168.30.10
+        longhorn-homelab.kakatkarakshay.dev: 192.168.30.10
+        node-red.kakatkarakshay.dev: 192.168.30.10
 
     blocking:
       denylists:
