@@ -9,18 +9,15 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
   id-token: write
-
-concurrency:
-  group: homelab-infrastructure
-  cancel-in-progress: false
 
 jobs:
   upgrade:
     name: Upgrade Cluster
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 240
     defaults:
       run:
         shell: bash
@@ -37,6 +34,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Queue behind other infrastructure runs
+        uses: ./.github/actions/infra-queue
+        with:
+          workflows: |
+            terraform.yml
+            cluster-upgrade.yml
 
       - name: Read target versions
         id: versions
