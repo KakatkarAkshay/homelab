@@ -47,3 +47,7 @@ provider "infisical" {
     universal = var.infisical_auth_method == "universal" ? {} : null
   }
 }
+
+provider "cloudflare" {
+  api_token = data.terraform_remote_state.cloudlab.outputs.cloudflare_api_token
+}

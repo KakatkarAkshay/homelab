@@ -131,3 +131,13 @@ variable "tailscale_client_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "cloudflare_zone" {
+  description = "Cloudflare DNS zone the homelab publishes into."
+  type        = string
+}
+
+variable "homelab_public_ip" {
+  description = "Static public IPv4 of the home connection, forwarded to the Traefik load balancer."
+  type        = string
+}
