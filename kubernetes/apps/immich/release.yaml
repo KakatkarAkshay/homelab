@@ -61,13 +61,14 @@ spec:
           containers:
             main:
               image:
-                tag: v3.1.0@sha256:5a0839dc5303cd7215bcd2180a26aed3af41675aefb3e75e5157e9f10ad16e6e
+                tag: v3.1.0-openvino@sha256:4b6ef958e7749fc548377bb23ee219c09c74da8decee080d76dc6a388c39b013
               resources:
                 requests:
                   cpu: 100m
                   memory: 1Gi
                 limits:
                   memory: 4Gi
+                  gpu.intel.com/i915: 1
       persistence:
         cache:
           enabled: true
