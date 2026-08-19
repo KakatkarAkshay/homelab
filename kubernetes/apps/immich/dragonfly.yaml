@@ -9,6 +9,7 @@ spec:
   imagePullPolicy: IfNotPresent
   args:
     - --proactor_threads=2
+    - --default_lua_flags=allow-undeclared-keys
   enableReplicationReadinessGate: true
   resources:
     requests:
