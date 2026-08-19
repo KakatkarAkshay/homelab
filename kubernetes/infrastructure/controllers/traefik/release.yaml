@@ -73,6 +73,9 @@ spec:
             - 10.244.0.0/16
       websecure:
         port: 443
+        transport:
+          respondingTimeouts:
+            readTimeout: 0
         forwardedHeaders:
           trustedIPs:
             - 10.244.0.0/16
