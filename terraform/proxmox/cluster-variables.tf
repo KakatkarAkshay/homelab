@@ -57,10 +57,10 @@ variable "cluster_nodes" {
       iot_mac    = "bc:24:11:10:00:11"
       memory     = 12288
       disk       = 320
-      gpu        = true
+      gpu        = false
       machine    = "pc"
       bios       = "seabios"
-      legacy_igd = true
+      legacy_igd = false
     }
   }
 
