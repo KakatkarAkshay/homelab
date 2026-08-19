@@ -240,9 +240,16 @@ resource "talos_machine_configuration_apply" "node" {
             },
           ]
         }
-        nodeLabels = each.value.gpu ? {
-          "intel.feature.node.kubernetes.io/gpu" = "true"
-        } : {}
+        nodeLabels = merge(
+          each.value.gpu ? {
+            "intel.feature.node.kubernetes.io/gpu" = "true"
+          } : {},
+          each.value.role == "controlplane" ? {
+            "node.kubernetes.io/exclude-from-external-load-balancers" = {
+              "$patch" = "delete"
+            }
+          } : {},
+        )
         time = {
           servers = ["time.cloudflare.com"]
         }
