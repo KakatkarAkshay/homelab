@@ -44,38 +44,6 @@ resource "kubernetes_secret_v1" "infisical_eso" {
   }
 }
 
-resource "infisical_secret_folder" "newt" {
-  project_id       = infisical_project.homelab.id
-  environment_slug = var.infisical_environment_slug
-  folder_path      = "/platform"
-  name             = "newt"
-  description      = "Newt site credentials issued by Pangolin."
-}
-
-resource "infisical_secret" "newt_pangolin_endpoint" {
-  workspace_id = infisical_project.homelab.id
-  env_slug     = var.infisical_environment_slug
-  folder_path  = infisical_secret_folder.newt.path
-  name         = "PANGOLIN_ENDPOINT"
-  value        = var.newt_pangolin_endpoint
-}
-
-resource "infisical_secret" "newt_id" {
-  workspace_id = infisical_project.homelab.id
-  env_slug     = var.infisical_environment_slug
-  folder_path  = infisical_secret_folder.newt.path
-  name         = "NEWT_ID"
-  value        = var.newt_id
-}
-
-resource "infisical_secret" "newt_secret" {
-  workspace_id = infisical_project.homelab.id
-  env_slug     = var.infisical_environment_slug
-  folder_path  = infisical_secret_folder.newt.path
-  name         = "NEWT_SECRET"
-  value        = var.newt_secret
-}
-
 resource "infisical_secret" "cloudflare_api_token" {
   workspace_id = infisical_project.homelab.id
   env_slug     = var.infisical_environment_slug

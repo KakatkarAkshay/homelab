@@ -36,8 +36,6 @@ jobs:
       TF_VAR_infisical_auth_method: oidc
       TF_VAR_infisical_host: ${{ vars.TF_VAR_INFISICAL_HOST }}
       TF_VAR_infisical_org_id: ${{ vars.TF_VAR_INFISICAL_ORG_ID }}
-      TF_VAR_newt_id: ${{ secrets.TF_VAR_NEWT_ID }}
-      TF_VAR_newt_secret: ${{ secrets.TF_VAR_NEWT_SECRET }}
       TF_VAR_authentik_outpost_token: ${{ secrets.TF_VAR_AUTHENTIK_OUTPOST_TOKEN }}
       TF_VAR_tailscale_client_secret: ${{ secrets.TF_VAR_TAILSCALE_CLIENT_SECRET }}
       INFISICAL_MACHINE_IDENTITY_ID: ${{ vars.INFISICAL_MACHINE_IDENTITY_ID }}

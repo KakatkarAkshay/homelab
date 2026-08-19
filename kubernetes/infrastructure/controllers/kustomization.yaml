@@ -13,4 +13,3 @@ resources:
   - volsync
   - metallb
   - longhorn
-  - newt

@@ -26,24 +26,6 @@ variable "infisical_environment_slug" {
   default     = "prod"
 }
 
-variable "newt_pangolin_endpoint" {
-  description = "Pangolin Cloud control plane the Newt site connects to."
-  type        = string
-  default     = "https://app.pangolin.net"
-}
-
-variable "newt_id" {
-  description = "Newt site ID issued by Pangolin."
-  type        = string
-  sensitive   = true
-}
-
-variable "newt_secret" {
-  description = "Newt site secret issued by Pangolin."
-  type        = string
-  sensitive   = true
-}
-
 variable "authentik_outpost_token" {
   description = "Token issued by authentik for the homelab proxy outpost."
   type        = string
