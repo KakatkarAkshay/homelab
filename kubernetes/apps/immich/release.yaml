@@ -29,6 +29,7 @@ spec:
                     name: immich-postgresql-app
                     key: uri
               DB_VECTOR_EXTENSION: vectorchord
+              IMMICH_LOG_LEVEL: verbose
               IMMICH_TRUSTED_PROXIES: 10.244.0.0/16,fd00:10:244::/56
               REDIS_HOSTNAME: dragonfly
     immich:
