@@ -87,6 +87,15 @@ spec:
     requests:
       cpu: 100m
       memory: 512Mi
+  probes:
+    liveness:
+      failureThreshold: 10
+      periodSeconds: 10
+      timeoutSeconds: 10
+    readiness:
+      failureThreshold: 6
+      periodSeconds: 10
+      timeoutSeconds: 10
   plugins:
     - name: barman-cloud.cloudnative-pg.io
       isWALArchiver: true
