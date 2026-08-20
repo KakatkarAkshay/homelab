@@ -52,8 +52,39 @@ spec:
                   cpu: 100m
                   memory: 512Mi
                 limits:
-                  cpu: 2
+                  cpu: 500m
                   memory: 4Gi
+              probes:
+                startup:
+                  enabled: true
+                  custom: true
+                  spec:
+                    httpGet:
+                      path: /api/server/ping
+                      port: http
+                    periodSeconds: 10
+                    timeoutSeconds: 10
+                    failureThreshold: 60
+                liveness:
+                  enabled: true
+                  custom: true
+                  spec:
+                    httpGet:
+                      path: /api/server/ping
+                      port: http
+                    periodSeconds: 30
+                    timeoutSeconds: 10
+                    failureThreshold: 10
+                readiness:
+                  enabled: true
+                  custom: true
+                  spec:
+                    httpGet:
+                      path: /api/server/ping
+                      port: http
+                    periodSeconds: 10
+                    timeoutSeconds: 10
+                    failureThreshold: 5
     machine-learning:
       controllers:
         main:
@@ -67,7 +98,7 @@ spec:
                   cpu: 100m
                   memory: 1Gi
                 limits:
-                  cpu: 2
+                  cpu: 500m
                   memory: 4Gi
                   gpu.intel.com/i915: 1
               probes:
