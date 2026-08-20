@@ -1,0 +1,7 @@
+apiVersion: longhorn.io/v1beta2
+kind: Node
+metadata:
+  name: viable-cricket
+  namespace: longhorn-system
+spec:
+  allowScheduling: false
