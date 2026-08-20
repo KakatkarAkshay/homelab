@@ -14,4 +14,6 @@ resource "flux_bootstrap_git" "this" {
 
   embedded_manifests = true
   path               = "kubernetes/clusters/homelab"
+
+  kustomization_override = file("${path.module}/flux-kustomization.yaml")
 }
