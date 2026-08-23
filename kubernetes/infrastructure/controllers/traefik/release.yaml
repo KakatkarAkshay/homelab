@@ -79,6 +79,11 @@ spec:
         forwardedHeaders:
           trustedIPs:
             - 10.244.0.0/16
+      dot:
+        port: 853
+        protocol: TCP
+        expose:
+          default: true
     resources:
       requests:
         cpu: 25m

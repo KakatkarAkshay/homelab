@@ -28,6 +28,7 @@ data:
       mapping:
         blocky-homelab.kakatkarakshay.dev: 192.168.30.10
         dns.kakatkarakshay.dev: 192.168.30.10
+        "/^.+\\.dns\\.kakatkarakshay\\.dev$/": 192.168.30.10
         home-assistant.kakatkarakshay.dev: 192.168.30.10
         homelab.kakatkarakshay.dev: 192.168.30.10
         homelab-gateway.kakatkarakshay.dev: 192.168.30.10
@@ -38,11 +39,9 @@ data:
     blocking:
       denylists:
         ads:
-          - https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts
-          - https://s3.amazonaws.com/lists.disconnect.me/simple_ad.txt
-          - https://s3.amazonaws.com/lists.disconnect.me/simple_tracking.txt
+          - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/ultimate.txt
         malware:
-          - https://urlhaus.abuse.ch/downloads/hostfile/
+          - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/tif.txt
       clientGroupsBlock:
         default:
           - ads
