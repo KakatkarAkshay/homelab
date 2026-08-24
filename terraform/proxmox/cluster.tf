@@ -205,16 +205,36 @@ resource "talos_machine_configuration_apply" "node" {
           extraArgs = {
             rotate-server-certificates = "true"
           }
-          extraConfig = {
-            shutdownGracePeriod             = "0s"
-            shutdownGracePeriodCriticalPods = "0s"
-            shutdownGracePeriodByPodPriority = [
-              { priority = 0, shutdownGracePeriodSeconds = 120 },
-              { priority = 1000000000, shutdownGracePeriodSeconds = 30 },
-              { priority = 2000000000, shutdownGracePeriodSeconds = 20 },
-              { priority = 2000001000, shutdownGracePeriodSeconds = 20 },
-            ]
-          }
+          extraConfig = merge(
+            {
+              shutdownGracePeriod             = "0s"
+              shutdownGracePeriodCriticalPods = "0s"
+              shutdownGracePeriodByPodPriority = [
+                { priority = 0, shutdownGracePeriodSeconds = 120 },
+                { priority = 1000000000, shutdownGracePeriodSeconds = 30 },
+                { priority = 2000000000, shutdownGracePeriodSeconds = 20 },
+                { priority = 2000001000, shutdownGracePeriodSeconds = 20 },
+              ]
+            },
+            each.value.role == "controlplane" ? {
+              evictionHard = {
+                "imagefs.available"  = "15%"
+                "imagefs.inodesFree" = "5%"
+                "memory.available"   = "1Gi"
+                "nodefs.available"   = "10%"
+                "nodefs.inodesFree"  = "5%"
+              }
+              kubeReserved = {
+                memory = "512Mi"
+              }
+              systemReserved = {
+                cpu                 = "50m"
+                "ephemeral-storage" = "256Mi"
+                memory              = "1Gi"
+                pid                 = "100"
+              }
+            } : {},
+          )
           nodeIP = {
             validSubnets = [local.management_subnet]
           }
