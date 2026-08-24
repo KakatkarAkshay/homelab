@@ -16,3 +16,45 @@ spec:
       memory: 256Mi
     limits:
       memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dragonfly-external
+  namespace: immich
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.30.14
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  loadBalancerSourceRanges:
+    - 192.168.20.4/32
+  selector:
+    app: dragonfly
+    app.kubernetes.io/name: dragonfly
+    role: master
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: redis
+      protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dragonfly-external
+  namespace: immich
+spec:
+  podSelector:
+    matchLabels:
+      app: dragonfly
+      app.kubernetes.io/name: dragonfly
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - ipBlock:
+            cidr: 192.168.20.4/32
+      ports:
+        - port: 6379
+          protocol: TCP

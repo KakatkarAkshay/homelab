@@ -34,6 +34,9 @@ data:
         homelab.kakatkarakshay.dev: 192.168.30.10
         homelab-gateway.kakatkarakshay.dev: 192.168.30.10
         immich.kakatkarakshay.dev: 192.168.30.10
+        immich-dragonfly.homelab.kakatkarakshay.dev: 192.168.30.14
+        immich-library.homelab.kakatkarakshay.dev: 192.168.30.12
+        immich-postgresql.homelab.kakatkarakshay.dev: 192.168.30.13
         longhorn-homelab.kakatkarakshay.dev: 192.168.30.10
         node-red.kakatkarakshay.dev: 192.168.30.10
 

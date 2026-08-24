@@ -30,6 +30,7 @@ spec:
                     key: uri
               DB_VECTOR_EXTENSION: vectorchord
               IMMICH_TRUSTED_PROXIES: 10.244.0.0/16,fd00:10:244::/56
+              IMMICH_MACHINE_LEARNING_URL: http://192.168.20.4:3003
               REDIS_HOSTNAME: dragonfly
     immich:
       configurationKind: Secret
@@ -47,6 +48,8 @@ spec:
             main:
               image:
                 tag: v3.1.0@sha256:b434cb9287eea1471c9974845914d4dd328c9c2d652e446ed4930f99944f0ceb
+              env:
+                IMMICH_WORKERS_INCLUDE: api
               resources:
                 requests:
                   cpu: 100m
@@ -85,55 +88,97 @@ spec:
                     periodSeconds: 10
                     timeoutSeconds: 10
                     failureThreshold: 5
-    machine-learning:
-      controllers:
-        main:
-          strategy: Recreate
-          containers:
-            main:
+            samba:
               image:
-                tag: v3.1.0-openvino@sha256:4b6ef958e7749fc548377bb23ee219c09c74da8decee080d76dc6a388c39b013
-              resources:
-                requests:
-                  cpu: 100m
-                  memory: 1Gi
-                limits:
-                  cpu: 500m
-                  memory: 4Gi
-                  gpu.intel.com/i915: 1
+                repository: ghcr.io/servercontainers/samba
+                tag: smbd-only-latest@sha256:a789aa42c2e5db804fab5fb5dd5f2d4343a9a8a7789e4a191aab45e993c15d4f
+              env:
+                NETBIOS_DISABLE: "true"
+                SAMBA_CONF_MAP_TO_GUEST: Bad User
+                SAMBA_VOLUME_CONFIG_immich: |-
+                  [immich]
+                  path = /data
+                  guest ok = yes
+                  guest only = yes
+                  browseable = no
+                  read only = no
+                  force user = root
+                  force group = root
+                  create mask = 0664
+                  directory mask = 0775
+                  hosts allow = 192.168.20.4
+                  oplocks = no
+                  level2 oplocks = no
+              ports:
+                - name: smb
+                  containerPort: 445
+                  protocol: TCP
+              securityContext:
+                runAsUser: 0
+                runAsGroup: 0
+                allowPrivilegeEscalation: false
               probes:
                 startup:
                   enabled: true
                   custom: true
                   spec:
-                    httpGet:
-                      path: /ping
-                      port: http
-                    periodSeconds: 10
-                    timeoutSeconds: 10
-                    failureThreshold: 60
+                    tcpSocket:
+                      port: smb
+                    periodSeconds: 2
+                    timeoutSeconds: 2
+                    failureThreshold: 30
                 liveness:
                   enabled: true
                   custom: true
                   spec:
-                    httpGet:
-                      path: /ping
-                      port: http
+                    tcpSocket:
+                      port: smb
                     periodSeconds: 30
-                    timeoutSeconds: 10
-                    failureThreshold: 10
+                    timeoutSeconds: 5
+                    failureThreshold: 3
                 readiness:
                   enabled: true
                   custom: true
                   spec:
-                    httpGet:
-                      path: /ping
-                      port: http
+                    tcpSocket:
+                      port: smb
                     periodSeconds: 10
-                    timeoutSeconds: 10
-                    failureThreshold: 5
+                    timeoutSeconds: 5
+                    failureThreshold: 3
+              resources:
+                requests:
+                  cpu: 25m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+      service:
+        main:
+          forceRename: immich-server
+        smb:
+          controller: main
+          type: LoadBalancer
+          externalTrafficPolicy: Local
+          loadBalancerSourceRanges:
+            - 192.168.20.4/32
+          annotations:
+            metallb.universe.tf/loadBalancerIPs: 192.168.30.12
+          ports:
+            smb:
+              port: 445
+              targetPort: smb
+              protocol: TCP
+      serviceMonitor:
+        main:
+          service:
+            identifier: main
       persistence:
-        cache:
-          enabled: true
-          type: persistentVolumeClaim
-          existingClaim: immich-machine-learning-cache
+        config:
+          type: secret
+          name: immich-configuration
+          advancedMounts:
+            main:
+              main:
+                - path: /config
+                  readOnly: true
+    machine-learning:
+      enabled: false
