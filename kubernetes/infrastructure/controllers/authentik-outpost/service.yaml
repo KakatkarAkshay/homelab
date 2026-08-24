@@ -23,6 +23,9 @@ spec:
   from:
     - group: gateway.networking.k8s.io
       kind: HTTPRoute
+      namespace: bluebubbles
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
       namespace: blocky
     - group: gateway.networking.k8s.io
       kind: HTTPRoute

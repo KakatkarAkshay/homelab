@@ -27,6 +27,7 @@ data:
       filterUnmappedTypes: true
       mapping:
         blocky-homelab.kakatkarakshay.dev: 192.168.30.10
+        bluebubbles.kakatkarakshay.dev: 192.168.30.10
         dns.kakatkarakshay.dev: 192.168.30.10
         "/^.+\\.dns\\.kakatkarakshay\\.dev$/": 192.168.30.10
         home-assistant.kakatkarakshay.dev: 192.168.30.10
