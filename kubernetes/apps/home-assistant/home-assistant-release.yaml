@@ -43,6 +43,14 @@ spec:
             key: uri
     service:
       port: 8123
+    startupProbe:
+      failureThreshold: 30
+      httpGet:
+        path: /
+        port: http
+        scheme: HTTP
+      periodSeconds: 10
+      timeoutSeconds: 2
     persistence:
       enabled: true
       existingClaim: home-assistant-pvc
