@@ -43,6 +43,12 @@
     },
     {
       "matchManagers": ["custom.jsonata"],
+      "matchPackageNames": ["siderolabs/talos"],
+      "ignoreUnstable": false,
+      "allowedVersions": "/^v?[0-9]+\\.[0-9]+\\.[0-9]+(-rc\\.[0-9]+)?$/"
+    },
+    {
+      "matchManagers": ["custom.jsonata"],
       "matchFileNames": ["cluster-versions.json"],
       "groupName": "talos + kubernetes",
       "separateMultipleMinor": true
