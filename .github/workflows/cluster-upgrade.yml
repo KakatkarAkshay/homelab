@@ -41,7 +41,7 @@ jobs:
       - name: Read target versions
         id: versions
         run: |
-          TALOS_VERSION="$(jq -er '.talos | select(test("^v[0-9]+\\.[0-9]+\\.[0-9]+$"))' cluster-versions.json)"
+          TALOS_VERSION="$(jq -er '.talos | select(test("^v[0-9]+\\.[0-9]+\\.[0-9]+(-rc\\.[0-9]+)?$"))' cluster-versions.json)"
           KUBERNETES_VERSION="$(jq -er '.kubernetes | select(test("^v[0-9]+\\.[0-9]+\\.[0-9]+$"))' cluster-versions.json)"
           echo "talos=$TALOS_VERSION" >> "$GITHUB_OUTPUT"
           echo "kubernetes=$KUBERNETES_VERSION" >> "$GITHUB_OUTPUT"
@@ -142,16 +142,18 @@ jobs:
           current_talos_version() {
             local output version
             output="$(talosctl version --short --nodes "$1")"
-            version="$(grep -Eo 'v[0-9]+\.[0-9]+\.[0-9]+' <<< "$output" | tail -n 1)"
+            version="$(grep -Eo 'v[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?' <<< "$output" | tail -n 1)"
             test -n "$version"
             printf '%s' "$version"
           }
 
           check_upgrade_path() {
             local component="$1" current="${2#v}" target="${3#v}"
+            local current_core="${current%%-*}" target_core="${target%%-*}"
             local current_major current_minor current_patch target_major target_minor target_patch
-            IFS=. read -r current_major current_minor current_patch <<< "$current"
-            IFS=. read -r target_major target_minor target_patch <<< "$target"
+            local current_prerelease="${current#"$current_core"}" target_prerelease="${target#"$target_core"}"
+            IFS=. read -r current_major current_minor current_patch <<< "$current_core"
+            IFS=. read -r target_major target_minor target_patch <<< "$target_core"
 
             if (( target_major != current_major || target_minor < current_minor || target_minor > current_minor + 1 )); then
               echo "Unsupported $component upgrade path: v$current to v$target" >&2
@@ -160,6 +162,14 @@ jobs:
             if (( target_minor == current_minor && target_patch < current_patch )); then
               echo "$component downgrades are not allowed: v$current to v$target" >&2
               return 1
+            fi
+            if (( target_minor == current_minor && target_patch == current_patch )); then
+              if [[ -z "$current_prerelease" && -n "$target_prerelease" ]] ||
+                { [[ "$current_prerelease" == -rc.* && "$target_prerelease" == -rc.* ]] &&
+                  (( ${target_prerelease#-rc.} < ${current_prerelease#-rc.} )); }; then
+                echo "$component downgrades are not allowed: v$current to v$target" >&2
+                return 1
+              fi
             fi
           }
 
