@@ -58,7 +58,7 @@ spec:
         metallb.universe.tf/loadBalancerIPs: 192.168.30.10
       spec:
         type: LoadBalancer
-        externalTrafficPolicy: Cluster
+        externalTrafficPolicy: Local
     ports:
       web:
         port: 80
