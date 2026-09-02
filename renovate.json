@@ -73,6 +73,13 @@
       "datasourceTemplate": "docker",
       "packageNameTemplate": "ghcr.io/siderolabs/kubelet",
       "versioningTemplate": "semver"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [".github/workflows/renovate.yml"],
+      "matchStrings": ["renovate-version: (?<currentValue>[^\\s]+)"],
+      "depNameTemplate": "ghcr.io/renovatebot/renovate",
+      "datasourceTemplate": "docker"
     }
   ]
 }
