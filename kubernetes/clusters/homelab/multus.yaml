@@ -47,7 +47,7 @@ spec:
             spec:
               containers:
                 - name: kube-multus
-                  image: ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot-thick@sha256:1c63b5d263b366405c259b0fcd1c7309f38141fb83f01743c245a7dd048ca41e
+                  image: ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot-thick@sha256:b2136983532b5bcd9480a3c906a2ac267d1ac0e7fb68512ff02236bde99682b8
                   resources:
                     requests:
                       cpu: "100m"
@@ -57,7 +57,7 @@ spec:
                       memory: "512Mi"
               initContainers:
                 - name: install-multus-binary
-                  image: ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot-thick@sha256:1c63b5d263b366405c259b0fcd1c7309f38141fb83f01743c245a7dd048ca41e
+                  image: ghcr.io/k8snetworkplumbingwg/multus-cni:snapshot-thick@sha256:b2136983532b5bcd9480a3c906a2ac267d1ac0e7fb68512ff02236bde99682b8
     # Talos ships only flannel's plugins, so Multus cannot find macvlan.
     - target:
         kind: DaemonSet
