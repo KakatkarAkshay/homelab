@@ -15,6 +15,16 @@
   },
   "packageRules": [
     {
+      "matchManagers": ["custom.jsonata"],
+      "matchPackageNames": ["ghcr.io/cloudnative-pg/postgresql", "ghcr.io/tensorchord/cloudnative-vectorchord"],
+      "pinDigests": true
+    },
+    {
+      "matchManagers": ["custom.jsonata"],
+      "matchPackageNames": ["ghcr.io/tensorchord/cloudnative-vectorchord"],
+      "versioning": "regex:^(?<major>\\d+)\\.(?<minor>\\d+)-(?<patch>\\d+)\\.(?<build>\\d+)\\.(?<revision>\\d+)$"
+    },
+    {
       "matchManagers": ["kubernetes"],
       "matchFileNames": ["**/gotk-components.yaml"],
       "enabled": false
@@ -48,6 +58,16 @@
     }
   ],
   "customManagers": [
+    {
+      "customType": "jsonata",
+      "fileFormat": "yaml",
+      "managerFilePatterns": ["kubernetes/**/*.yaml", "kubernetes/**/*.yml"],
+      "matchStrings": [
+        "$[apiVersion = 'postgresql.cnpg.io/v1' and kind = 'Cluster' and $exists(spec.imageName)].($image := $split(spec.imageName, '@'); {'depName': $substringBefore($image[0], ':'), 'currentValue': $substringAfter($image[0], ':'), 'currentDigest': $image[1]})"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "docker"
+    },
     {
       "customType": "jsonata",
       "fileFormat": "yaml",
