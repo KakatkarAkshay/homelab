@@ -55,7 +55,7 @@ metadata:
   name: blocky-doh
   namespace: blocky
   annotations:
-    external-dns.alpha.kubernetes.io/gateway-hostname-source: annotation-only
+    external-dns.kubernetes.io/gateway-hostname-source: annotation-only
 spec:
   parentRefs:
     - name: blocky-dns
